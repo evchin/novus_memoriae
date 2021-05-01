@@ -1,58 +1,89 @@
 # **Novus Memoriae**
 
-## About:
+## About
 
 Novus Memoriae is a library that redefines the infamous C++ pointer into an entirely new class. The `Ptr` operates in the same way as the original C++ pointer (besides some syntax differences). However, instead of within the RAM, all memory is saved in a byte array, within the `Memory` class; this makes memory portable. See detailed usage and class structure below.
 
 Thank you to Professor Barkeshli for the project idea and structural guidance. :)  
 
-## Features:
+## Features
 
-- `Constants`: stores capacity of memory
-- `Globals`: initiates global memory
-- `Memory`: A class that accesses and moves memory directly.
-    - Member Variables
-        - `int _index_`:  the next free index in memory
-        - `byte _memory[CAPACITY]`: memory
-        - `bool _allocated[CAPACITY]`: indicates if memory is allocated at index i
-    - Public Methods
-        - `int allocate(int bytes)`: allocate from start for bytes, return new start
-        - `void deallocate(int start, int bytes)`: deallocate from start for bytes
-        - `void store(const int start, T object)`: store object into start
-        - `void retrieve(int start, T& object)`: retrieve byte array and store in object
-        - `void print(int start, int size)`: print memory and allocated
-        - `void print_allocated(int start = 0, int bytes = CAPACITY)`: print allocated cells
-        - `void reset()`: reset memory
-        - `byte* get_index(int index)`: get array spot at index
-    - Private Methods
-        - `int next_free_index(int index, int space_needed)`: find next unallocated index that can hold space_needed
-        - `int next_free_index(int index)`: find next unallocated index
-        - `bool has_space(int index, int spaces)`: has enough memory at _free_index
-        - `void set_allocated(int start, int spaces, bool value)`: toggle allocated array to value
-        - `void clear(int start, int spaces)`: clear memory from start to start + size
-- `Serialize`: A collection of functions for serialization and deserialization
-    - `array<byte, sizeof(T)> serialize(const T& object)`: serializes object into byte array
-    - `T& deserialize(const array<byte, sizeof(T)>& bytes, T& object)`: deserializes byte array into an object
-- `Ptr`: A class that acts as a pointer.
-    - Member Variables
-        - `int _index`: index of pointer in memory array
-        - `int _num`: num of T if an array
-    - Public Methods
-        - `void _new(int num = 1)`: allocate in memory
-        - `void _delete(bool brackets = false)`: deallocate in memory
-        - `Ptr<T>& operator++()`: prefix increment
-        - `Ptr<T> operator++(int)`: postfix increment
-        - `T& operator*()`: dereferencing operator that returns item by reference
-        - `T const operator*() const`: derefencing operator that returns item by value
-        - `int operator&()`: return address of
-        - `void operator=(const Ptr<T> &rhs)`: assignment operator overload
-        - `bool null() const`: returns true if nullptr 
-        - `bool operator! ()`: returns true if nullptr
-        - `void set_null()`: sets ptr to nullptr 
-        - `T* operator->()`: -> operator
-        - `friend Ptr<T> operator+(Ptr<T> const& ptr, int const& steps)`: perform pointer arithmetic and return resultant pointer
-        - `friend ostream& operator<<(ostream& os, Ptr<T> const& ptr)`: print address in array
-        - `friend bool operator==(Ptr<T> const &lhs, Ptr<T> const &rhs)`: == operator
+<h3>Fundamental Classes</h3>
+<ul>
+    <li><code>Constants</code> stores the capacity of our memory.</li>
+    <li><code>Globals</code> initiates our memory array as a global variable.
+        <ul>
+            <li><code>array<byte, sizeof(T)> serialize(const T& object)</code> serializes a given templated object into a byte array.</li>
+            <li><code>T& deserialize(const array<byte, sizeof(T)>& bytes, T& object)</code> deserializes a given byte array into an objectdeserializes byte array into an object.</li>
+        </ul>
+    </li>
+    <li><code>Serialize</code> is a collection of functions for serialization and deserialization of objects.</li>
+</ul>
+<h3>Secondary Classes</h3>
+<ul>
+    <li><code>Memory</code> manipulates our "memory" directly. It gets its hands dirty in all of the array indexing and data navigation.
+        <ul>
+            <li>Memory Variables</li>
+            <ul>
+                <li><code>int _index</code> is the next free index in memory.</li>
+                <li><code>byte _memory[CAPACITY]</code> acts as the memory itself.</li>
+                <li><code>bool _allocated[CAPACITY]</code> indicates if memory is allocated at index i of <code>_memory</code>.</li>
+            </ul>
+        </ul>
+        <ul>
+            <li>Public Methods</li>
+            <ul>
+                <li><code>int allocate(int bytes)</code> allocates memory with a size of <code>bytes</code>, returning the starting index of the object.</li>
+                <li><code>void deallocate(int start, int bytes)</code> deallocates memory from <code>start</code> for a size of <code>bytes</code>.</li>
+                <li><code>void store(const int start, T object)</code> stores <code>object</code> in memory starting from index <code>start</code>.</li>
+                <li><code>void retrieve(int start, T& object)</code> retrieves a byte array from index <code>start</code> and stores it in <code>object</code>.</li>
+                <li><code>void print(int start, int size)</code> prints the <code>_memory</code> and <code>_allocated</code> arrays.</li>
+                <li><code>void print_allocated(int start = 0, int bytes = CAPACITY)</code> prints the <code>_allocated</code> array only.</li>
+                <li><code>void reset()</code> resets <code>_memory</code> and <code>_allocated</code> such that nothing is stored.</li>
+                <li><code>byte* get_index(int index)</code> returns the index of an array at <code>index</code>.</li>
+            </ul>
+        </ul>
+        <ul>
+            <li>Private Methods</li>
+            <ul>
+                <li><code>int next_free_index(int index, int space_needed)</code> finds the next unallocated index that can hold <code>space_needed</code>.</li>
+                <li><code>int next_free_index(int index)</code> finds the next unallocated index.</li>
+                <li><code>bool has_space(int index, int spaces)</code> returns true if there are at least <code>spaces</code> that are unallocated at <code>_free_index</code>.</li>
+                <li><code>void set_allocated(int start, int spaces, bool value)</code> sets the spots from <code>start</code> to <code>start + spaces</code> in <code>_allocated</code> to <code>value</code>.</li>
+                <li><code>void clear(int start, int spaces)</code> clears the memory from <code>start</code> to <code>start + size</code></li>
+            </ul>
+        </ul>
+    </li>
+    <li><code>Ptr</code> is our substitute for the C++ pointer.
+        <ul>
+            <li>Member Variables</li>
+            <ul>
+                <li><code>int _index</code> is the index of a pointer in the memory array.</li>
+                <li><code>int _num</code> is the number of T objects there are if the pointer is the beginning of an array.</li>
+            </ul>
+        </ul>
+        <ul>
+            <li>Public Methods</li>
+            <ul>
+                <li><code>void _new(int num = 1)</code> allocates a number <code>num</code> of object Ts in memory.</li>
+                <li><code>void _delete(bool brackets = false)</code> deallocates objects in memory, where brackets represents the syntax <code>delete [] object;</code></li>
+                <li><code>Ptr<T>& operator++()</code> overloads the prefix increment.</li>
+                <li><code>Ptr<T> operator++(int)</code> overloads the postfix increment.</li>
+                <li><code>T& operator*()</code> overloads the dereferencing operator that returns the item by reference.</li>
+                <li><code>T const operator*() const</code> overloads the dereferencing operator that returns the item by value.</li>
+                <li><code>int operator&()</code> returns the Ptr's address. Normally, this would be a memory address, but in our case, it is an array index.</li>
+                <li><code>void operator=(const Ptr<T> &rhs)</code> overloads the assignment operator.</li>
+                <li><code>bool null() const</code> returns true if the Ptr is considered a "nullptr".</li>
+                <li><code>bool operator! ()</code> returns true if the Ptr is considered a "nullptr".</li>
+                <li><code>void set_null()</code> sets the Ptr to a "nullptr" (equivalent to <code>ptr = nullptr;</code>)</li>
+                <li><code>T* operator->()</code> overloads the right arrow operator.</li>
+                <li><code>friend Ptr<T> operator+(Ptr<T> const& ptr, int const& steps)</code> performs pointer arithmetic and returns the resultant pointer.</li>
+                <li><code>friend ostream& operator<<(ostream& os, Ptr<T> const& ptr)</code> prints the array index as the "memory address".</li>
+                <li><code>friend bool operator==(Ptr<T> const &lhs, Ptr<T> const &rhs)</code> overloads the == operator.</li>
+            </ul>
+        </ul>
+    </li>
+</ul>
 
 **Files for Testing Purposes**: 
 
